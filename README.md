@@ -67,6 +67,8 @@ event TokenSwapped(
     uint amountOut
 );
 
+---
+
 ## 🛡️ Security Considerations
 
 🛑 Reentrancy Protection – via OpenZeppelin's ReentrancyGuard
@@ -75,15 +77,18 @@ event TokenSwapped(
 
 ✅ Token Validation – ensures valid ERC-20 token addresses
 
-🔗 Dependencies
+---
+
+##🔗 Dependencies
 This contract relies on trusted OpenZeppelin libraries:
 
 IERC20 – Standard ERC-20 token interface
 
 ReentrancyGuard – Protects against reentrancy attacks
 
-🧪 Sample Interactions
-✅ Adding Liquidity
+---
+##🧪 Sample Interactions
+###✅ Adding Liquidity
 solidity
 simpleSwap.provideLiquidity(
     tokenAlpha,
@@ -107,10 +112,15 @@ simpleSwap.swapTokens(
     msg.sender,
     block.timestamp + 600
 );
+
+---
+
 🌐 Web Interface
 A simple web-based DApp was developed to interact with the SimpleSwap contract.
 
-Features:
+---
+
+##Features:
 Wallet connection (e.g. MetaMask)
 
 Real-time token swaps
@@ -119,9 +129,11 @@ Add/remove liquidity
 
 View current token price
 
-🔗 Try the DApp on Vercel https://tp-4-ethkipu.vercel.app/
+---
 
-🛠 Tech Stack
+###🔗 Try the DApp on Vercel https://tp-4-ethkipu.vercel.app/
+
+##🛠 Tech Stack
 Solidity ^0.8.27
 
 ERC-20 token standards
@@ -131,6 +143,8 @@ OpenZeppelin Contracts:
 IERC20
 
 ReentrancyGuard
+
+---
 
 👨‍💻 Creator
 Developed by Sergio Daniel Blanco
