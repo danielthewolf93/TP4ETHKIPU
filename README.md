@@ -1,50 +1,64 @@
-🚀 SimpleSwap –Smart Contract
-  Introduction
-SimpleSwap is a lightweight Solidity smart contract that implements a two-token liquidity pool using an Automated Market Maker (AMM) model. 
+# 🚀 SimpleSwap – Smart Contract
 
+## 📘 Introduction
 
+**SimpleSwap** is a lightweight Solidity smart contract that implements a two-token liquidity pool using an Automated Market Maker (AMM) model. It enables decentralized token swaps, liquidity provisioning, and price querying — inspired by the mechanics of Uniswap V2.
 
-🔧 Deployment Details
-Component	Blockchain Address
-Token Alpha	0x9bd9fEbe7399e3e4B360D2262D778f6cDA921b57
-Token Beta	0x76C701fB590D9B72fA4Bb97beC3581DC36B75f4C
-DualPool	0xcD98aE6B1a3cd2Aa85EcB97D85fCD53684b4Dd45
+---
 
-🔍 Key Functionalities
-🧪 provideLiquidity()
-Allows users to supply equal-value amounts of both tokens to the pool.
+## 🔧 Deployment Details
 
-Automatically determines balanced deposit amounts
+| Component         | Blockchain Address                             |
+|-------------------|------------------------------------------------|
+| **TokenA**        | `0xf172b357531c281579892b9457ee02404cb44281`   |
+| **TokenB**        | `0xec5089CeE3bDC194b6194dcc32c1Cfb78D83AaF1`   |
+| **SimpleSwap**    | `0xFbB85e6859Ff9BCA5928bBd49e7DB91dF928fB60`   |
 
-Mints LP tokens to represent pool ownership
+---
 
-Emits a LiquidityProvisioned event
+## 🔍 Key Functionalities
 
-🔁 withdrawLiquidity()
-Burns the user’s LP tokens and returns a proportional amount of both underlying tokens.
+### 🧪 `provideLiquidity()`
 
-Ensures fair withdrawal based on current reserves
+Allows users to supply equal-value amounts of both tokens to the pool:
 
-Emits LiquidityWithdrawn event
+- Automatically calculates balanced deposit amounts  
+- Mints LP tokens representing user ownership  
+- Emits a `LiquidityProvisioned` event  
 
-🔄 swapTokens()
-Enables the user to exchange one token for another using a constant product formula.
+---
 
-Charges a 0.3% fee on trades
+### 🔁 `withdrawLiquidity()`
 
-Prevents front-running with deadline validation
+Burns the user's LP tokens to redeem proportional reserves:
 
-Emits a TokenSwapped event
+- Ensures fair withdrawal amounts  
+- Updates internal reserves  
+- Emits a `LiquidityWithdrawn` event  
 
-📈 fetchExchangeRate()
-Returns the current price ratio between Token Alpha and Token Beta derived from internal reserves.
+---
 
-📡 Events
+### 🔄 `swapTokens()`
+
+Enables token-to-token swaps using a constant product AMM formula:
+
+- Applies a 0.3% trading fee  
+- Validates deadline to avoid stale transactions  
+- Emits a `TokenSwapped` event  
+
+---
+
+### 📈 `fetchExchangeRate()`
+
+Returns the current price ratio between Token Alpha and Token Beta using reserve balances.
+
+---
+
+## 📡 Events
+
 solidity
-Copiar
-Editar
-event LiquidityProvisioned(address indexed user, uint amountAlpha, uint amountBeta);
-event LiquidityWithdrawn(address indexed user, uint amountAlpha, uint amountBeta);
+event LiquidityProvisioned(address indexed user, uint amountA, uint amountB);
+event LiquidityWithdrawn(address indexed user, uint amountA, uint amountB);
 event TokenSwapped(
     address indexed trader,
     address tokenIn,
@@ -53,68 +67,68 @@ event TokenSwapped(
     uint amountOut
 );
 🛡️ Security Considerations
-🛑 Reentrancy Protected – via OpenZeppelin’s ReentrancyGuard
+🛑 Reentrancy Protection – via OpenZeppelin's ReentrancyGuard
 
-🕒 Transaction Deadlines – prevent execution of stale transactions
+🕒 Deadline Enforcement – avoids execution of expired transactions
 
-✅ Token Validation – ensures legitimate ERC-20 interactions
+✅ Token Validation – ensures valid ERC-20 token addresses
 
 🔗 Dependencies
-This contract integrates standard OpenZeppelin components:
+This contract relies on trusted OpenZeppelin libraries:
 
-IERC20 – Token interface
+IERC20 – Standard ERC-20 token interface
 
-ReentrancyGuard – Prevents nested calls
+ReentrancyGuard – Protects against reentrancy attacks
 
 🧪 Sample Interactions
-Adding Liquidity
+✅ Adding Liquidity
 solidity
-Copiar
-Editar
-dualPool.provideLiquidity(
+simpleSwap.provideLiquidity(
     tokenAlpha,
     tokenBeta,
-    100 ether,   // desired tokenAlpha
-    200 ether,   // desired tokenBeta
-    90 ether,    // min acceptable tokenAlpha
-    180 ether,   // min acceptable tokenBeta
+    100 ether,   // desired amount of Token A
+    200 ether,   // desired amount of Token B
+    50 ether,    // min acceptable amount of Token A
+    90 ether,   // min acceptable amount of Token B
     msg.sender,
-    block.timestamp + 600  // expires in 10 minutes
+    block.timestamp + 600  
 );
-Swapping Tokens
+🔄 Swapping Tokens
 solidity
-Copiar
-Editar
-path[0] = tokenAlpha;
-path[1] = tokenBeta;
+path[0] = tokenA;
+path[1] = tokenB;
 
-dualPool.swapTokens(
-    10 ether,     // input tokenAlpha
-    9 ether,      // minimum tokenBeta to receive
+simpleSwap.swapTokens(
+    100 ether,     // input Token A
+    90 ether,      // minimum Token B to receive
     path,
     msg.sender,
     block.timestamp + 600
 );
 🌐 Web Interface
-An interactive DApp was built for user-friendly interaction with DualPool.
+A simple web-based DApp was developed to interact with the SimpleSwap contract.
 
-Features include:
+Features:
 Wallet connection (e.g. MetaMask)
 
-Token swaps in real time
+Real-time token swaps
 
-Liquidity management
+Add/remove liquidity
 
-Live token pricing
+View current token price
 
-🔗 Try it now → DApp on Vercel https://tp-modulo-4-eopc.vercel.app/
+🔗 Try the DApp on Vercel https://tp-4-ethkipu.vercel.app/
 
 🛠 Tech Stack
 Solidity ^0.8.27
 
-ERC-20 compliant token contracts
+ERC-20 token standards
 
-OpenZeppelin libraries: IERC20, ReentrancyGuard
+OpenZeppelin Contracts:
+
+IERC20
+
+ReentrancyGuard
 
 👨‍💻 Creator
 Developed by Sergio Daniel Blanco
