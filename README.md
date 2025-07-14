@@ -56,9 +56,11 @@ Returns the current price ratio between Token Alpha and Token Beta using reserve
 
 ## 📡 Events
 
-solidity
+
 event LiquidityProvisioned(address indexed user, uint amountA, uint amountB);
+
 event LiquidityWithdrawn(address indexed user, uint amountA, uint amountB);
+
 event TokenSwapped(
     address indexed trader,
     address tokenIn,
@@ -89,7 +91,7 @@ ReentrancyGuard – Protects against reentrancy attacks
 ---
 ## 🧪 Sample Interactions
 ### ✅ Adding Liquidity
-solidity
+
 simpleSwap.provideLiquidity(
     tokenAlpha,
     tokenBeta,
@@ -101,8 +103,9 @@ simpleSwap.provideLiquidity(
     block.timestamp + 600  
 );
 🔄 Swapping Tokens
-solidity
+
 path[0] = tokenA;
+
 path[1] = tokenB;
 
 simpleSwap.swapTokens(
