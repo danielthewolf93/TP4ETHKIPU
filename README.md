@@ -66,7 +66,9 @@ event TokenSwapped(
     address tokenOut,
     uint amountOut
 );
-🛡️ Security Considerations
+
+## 🛡️ Security Considerations
+
 🛑 Reentrancy Protection – via OpenZeppelin's ReentrancyGuard
 
 🕒 Deadline Enforcement – avoids execution of expired transactions
