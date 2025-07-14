@@ -121,13 +121,14 @@ simpleSwap.swapTokens(
 ## 🌐 Web Interface
 A simple web-based DApp was developed to interact with the SimpleSwap contract.
 
-🔗 [Try the DApp on Vercel](https://tp-4-ethkipu.vercel.app/)
+🔗 <a href="https://tp-4-ethkipu.vercel.app/" target="_blank">Try the DApp on Vercel</a>
+
+---
 
 ### 🔍 Test Coverage
 
 View the test coverage directly in your browser:  
-📊 [View Test Coverage Report](https://tp-4-ethkipu-coverage.vercel.app/)
-
+📊 <a href="https://tp-4-ethkipu-coverage.vercel.app/" target="_blank">View Test Coverage Report</a>
 
 ---
 
