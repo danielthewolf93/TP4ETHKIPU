@@ -87,8 +87,8 @@ IERC20 – Standard ERC-20 token interface
 ReentrancyGuard – Protects against reentrancy attacks
 
 ---
-##🧪 Sample Interactions
-###✅ Adding Liquidity
+## 🧪 Sample Interactions
+### ✅ Adding Liquidity
 solidity
 simpleSwap.provideLiquidity(
     tokenAlpha,
@@ -115,12 +115,13 @@ simpleSwap.swapTokens(
 
 ---
 
-🌐 Web Interface
+### 🌐 Web Interface
 A simple web-based DApp was developed to interact with the SimpleSwap contract.
+🔗 Try the DApp on Vercel https://tp-4-ethkipu.vercel.app/
 
 ---
 
-##Features:
+## Features:
 Wallet connection (e.g. MetaMask)
 
 Real-time token swaps
@@ -131,9 +132,7 @@ View current token price
 
 ---
 
-###🔗 Try the DApp on Vercel https://tp-4-ethkipu.vercel.app/
-
-##🛠 Tech Stack
+## 🛠 Tech Stack
 Solidity ^0.8.27
 
 ERC-20 token standards
