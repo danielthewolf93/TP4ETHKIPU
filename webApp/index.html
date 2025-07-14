@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SimpleSwap DApp</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+   
+    <div class="container">
+        <div class="header">
+            <h1 class="logo">SimpleSwap</h1>
+            <p class="subtitle">Intercambia tokens de forma descentralizada</p>
+        </div>
+
+        <div class="wallet-section">
+            <button class="wallet-button" onclick="connectWallet()">
+                <span id="walletButtonText">Conectar Billetera</span>
+            </button>
+            <div class="wallet-status" id="accountAddress" style="display: none;">
+                No conectado
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showSection('swap')">Swap</button>
+            <button class="tab" onclick="showSection('liquidity')">Liquidez</button>
+            <button class="tab" onclick="showSection('admin')">Contrato</button>
+        </div>
+
+        <!-- Sección Swap -->
+        <div id="swap" class="section active">
+            <div class="card">
+                <h2 class="card-title">Intercambiar Tokens</h2>
+                
+                <div class="swap-container">
+                    <div class="token-input">
+                        <div class="token-select">
+                            <div class="token-icon" id="tokenFromIcon">A</div>
+                            <select class="select-field" id="tokenIn" onchange="updateTokenIcons()">
+                                <option value="A">Token A</option>
+                                <option value="B">Token B</option>
+                            </select>
+                        </div>
+                        <input type="number" class="input-field" id="amountIn" placeholder="0.0" value="1">
+                    </div>
+
+                    <div class="swap-icon" onclick="swapTokens()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M7 16l4-4-4-4M17 8l-4 4 4 4"/>
+                        </svg>
+                    </div>
+
+                    <div class="token-input">
+                        <div class="token-select">
+                            <div class="token-icon" id="tokenToIcon">B</div>
+                            <span>Token de salida</span>
+                        </div>
+                        <input type="text" class="input-field" placeholder="0.0" readonly>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="swap()">Intercambiar</button>
+                <div id="swapResult"></div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">Precio del Token</h2>
+                <div class="grid">
+                    <div class="input-group">
+                        <select class="select-field" id="tokenA_price">
+                            <option value="A">Token A</option>
+                            <option value="B">Token B</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <select class="select-field" id="tokenB_price">
+                            <option value="A">Token A</option>
+                            <option value="B">Token B</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-secondary" onclick="getPrice()">Obtener Precio</button>
+                <div id="priceDisplay"></div>
+            </div>
+        </div>
+
+        <!-- Sección Liquidez -->
+        <div id="liquidity" class="section">
+            <div class="card">
+                <h2 class="card-title">Añadir Liquidez</h2>
+                <div class="input-group">
+                    <label class="input-label">Token A</label>
+                    <input type="number" class="input-field" id="amountA_liq" placeholder="0.0" value="100">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Token B</label>
+                    <input type="number" class="input-field" id="amountB_liq" placeholder="0.0" value="100">
+                </div>
+                <button class="btn btn-primary" onclick="addLiquidity()">Añadir Liquidez</button>
+                <div id="addLiquidityResult"></div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">Remover Liquidez</h2>
+                <div class="input-group">
+                    <label class="input-label">LP Tokens a Quemar</label>
+                    <input type="number" class="input-field" id="liquidityToBurn" placeholder="0.0" value="10">
+                </div>
+                <button class="btn btn-secondary" onclick="removeLiquidity()">Remover Liquidez</button>
+                <div id="removeLiquidityResult"></div>
+            </div>
+        </div>
+
+        <!-- Sección Admin -->
+        <div id="admin" class="section">
+            <div class="card">
+                <h2 class="card-title">Mintear Tokens</h2>
+                <p style="color: #6b7280; font-size: 14px; margin-bottom: 20px;">Solo disponible para el owner del contrato</p>
+                <div class="input-group">
+                    <label class="input-label">Cantidad</label>
+                    <input type="number" class="input-field" id="mintAmount" placeholder="0.0" value="1000">
+                </div>
+                <div class="grid">
+                    <button class="btn btn-primary" onclick="mintToken('A')">Mintear Token A</button>
+                    <button class="btn btn-primary" onclick="mintToken('B')">Mintear Token B</button>
+                </div>
+                <div id="mintResult"></div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">Aprobar Tokens</h2>
+                <div class="input-group">
+                    <label class="input-label">Cantidad Token A</label>
+                    <input type="number" class="input-field" id="approveAmountA" placeholder="0.0" value="1000">
+                </div>
+                <button class="btn btn-secondary btn-small" onclick="approveToken('A')">Aprobar Token A</button>
+                
+                <div class="input-group">
+                    <label class="input-label">Cantidad Token B</label>
+                    <input type="number" class="input-field" id="approveAmountB" placeholder="0.0" value="1000">
+                </div>
+                <button class="btn btn-secondary btn-small" onclick="approveToken('B')">Aprobar Token B</button>
+                <div id="approveResult"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
