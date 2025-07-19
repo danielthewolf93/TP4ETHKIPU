@@ -6,9 +6,10 @@ let tokenAContract;
 let tokenBContract;
 
 // Direcciones de contratos
-const tokenAAddress = "0xf172b357531C281579892b9457eE02404Cb44281"; // Replace with deployed TokenA address
-const tokenBAddress = "0xec5089CeE3bDC194b6194dcc32c1Cfb78D83AaF1"; // Replace with deployed TokenB address
-const simpleSwapAddress = "0xFbB85e6859Ff9BCA5928bBd49e7DB91dF928fB60"; // Replace with deployed SimpleSwap address
+const tokenAAddress = "0xa6a40df02fdBf62e48B7FDBB3d80a10F378AF24C"; 
+const tokenBAddress = "0x59A7EFAF3C24e2a053B2D92fc427FdA3181a45D5";
+const simpleSwapAddress = "0xCc55aFB4BcEf3D24E196693e1a3250e4faFe3eD4";
+
 
 // ABIs
 const SIMPLE_SWAP_ABI = [
@@ -169,7 +170,7 @@ const SIMPLE_SWAP_ABI = [
 },
 {
 "inputs": [],
-"name": "reserve0",
+"name": "reserveA",
 "outputs": [
     { "internalType": "uint256", "name": "", "type": "uint256" }
 ],
@@ -178,7 +179,7 @@ const SIMPLE_SWAP_ABI = [
 },
 {
 "inputs": [],
-"name": "reserve1",
+"name": "reserveB",
 "outputs": [
     { "internalType": "uint256", "name": "", "type": "uint256" }
 ],
@@ -202,7 +203,7 @@ const SIMPLE_SWAP_ABI = [
 },
 {
 "inputs": [],
-"name": "token0",
+"name": "tokenA",
 "outputs": [
     { "internalType": "address", "name": "", "type": "address" }
 ],
@@ -211,7 +212,7 @@ const SIMPLE_SWAP_ABI = [
 },
 {
 "inputs": [],
-"name": "token1",
+"name": "tokenB",
 "outputs": [
     { "internalType": "address", "name": "", "type": "address" }
 ],
@@ -263,11 +264,23 @@ function showSection(sectionName) {
 
 // Función para intercambiar tokens en la UI
 function swapTokens() {
+    // Intercambiar token seleccionado
     const tokenIn = document.getElementById('tokenIn');
-    const currentValue = tokenIn.value;
-    tokenIn.value = currentValue === 'A' ? 'B' : 'A';
+    tokenIn.value = tokenIn.value === 'A' ? 'B' : 'A';
+
     updateTokenIcons();
+
+    // Limpiar inputs
+    const amountInInput = document.getElementById('amountIn');
+
+    // El input readonly (de salida) es el segundo input-field dentro de swap-container
+    const swapContainer = document.querySelector('.swap-container');
+    const amountOutInput = swapContainer.querySelectorAll('input.input-field')[1];
+
+    amountInInput.value = '';
+    if (amountOutInput) amountOutInput.value = '';
 }
+
 
 // Función para actualizar iconos de tokens
 function updateTokenIcons() {
@@ -321,7 +334,7 @@ async function connectWallet() {
 // Función para mintear tokens
 async function mintToken(tokenType) {
     if (!signer) {
-        alert("Please connect your wallet first");
+        alert("Por favor, conecta primero tu billetera.");
         return;
     }
 
@@ -385,7 +398,7 @@ async function mintToken(tokenType) {
 // Función para aprobar tokens
 async function approveToken(tokenType) {
     if (!signer) {
-        alert("Please connect your wallet first");
+        alert("Por favor, conecta primero tu billetera.");
         return;
     }
 
@@ -442,7 +455,7 @@ async function approveToken(tokenType) {
 // Función para añadir liquidez
 async function addLiquidity() {
     if (!simpleSwapContract || !signer) {
-        alert("Please connect your wallet first");
+        alert("Por favor, conecta primero tu billetera.");
         return;
     }
 
@@ -503,7 +516,7 @@ async function addLiquidity() {
 // Función para remover liquidez
 async function removeLiquidity() {
     if (!simpleSwapContract || !signer) {
-        alert("Please connect your wallet first");
+        alert("Por favor, conecta primero tu billetera.");
         return;
     }
 
@@ -553,7 +566,7 @@ async function removeLiquidity() {
 // Función para realizar swap
 async function swap() {
     if (!simpleSwapContract || !signer) {
-        alert("Please connect your wallet first");
+        alert("Por favor, conecta primero tu billetera.");
         return;
     }
 
@@ -598,20 +611,20 @@ async function swap() {
         await approveTx.wait();
         console.log(`Aprobación de Token ${tokenInSelection} exitosa:`, approveTx.hash);
 
-        const currentToken0 = await simpleSwapContract.token0();
-        const currentToken1 = await simpleSwapContract.token1();
+        const currentToken0 = await simpleSwapContract.tokenA();
+        const currentToken1 = await simpleSwapContract.tokenB();
 
         let reserveIn;
         let reserveOut;
 
         if (tokenInAddress === currentToken0) {
-            reserveIn = await simpleSwapContract.reserve0();
-            reserveOut = await simpleSwapContract.reserve1();
+            reserveIn = await simpleSwapContract.reserveA();
+            reserveOut = await simpleSwapContract.reserveB();
         } else if (tokenInAddress === currentToken1) {
-            reserveIn = await simpleSwapContract.reserve1();
-            reserveOut = await simpleSwapContract.reserve0();
+            reserveIn = await simpleSwapContract.reserveB();
+            reserveOut = await simpleSwapContract.reserveA();
         } else {
-            console.error("Invalid tokenInAddress relative to simpleSwap's token0/token1");
+            console.error("Invalid tokenInAddress relative to simpleSwap's tokenA/tokenB");
             showResult('swapResult', 'Error: Configuración de token incorrecta', false);
             return;
         }
@@ -636,7 +649,12 @@ async function swap() {
         const receipt = await transaction.wait();
         console.log("Swap transaction successful:", receipt);
         const tokenOutSymbol = tokenInSelection === 'A' ? await tokenBContract.symbol() : await tokenAContract.symbol();
-        showResult('swapResult', `¡Intercambio exitoso! Recibiste ~${ethers.utils.formatUnits(expectedAmountOut, decimalsIn)} ${tokenOutSymbol}. Hash: ${receipt.transactionHash.substring(0, 6)}...${receipt.transactionHash.substring(receipt.transactionHash.length - 4)}`, true);
+        const explorerUrl = `https://sepolia.etherscan.io/tx/${receipt.transactionHash}`;
+        const hashShort = `${receipt.transactionHash.substring(0, 6)}...${receipt.transactionHash.slice(-4)}`;
+        const message = `¡Intercambio exitoso! Recibiste ~${ethers.utils.formatUnits(expectedAmountOut, decimalsIn)} ${tokenOutSymbol}. <a href="${explorerUrl}" target="_blank" rel="noopener noreferrer">Ver transacción: ${hashShort}</a>`;
+
+        showResult('swapResult', message, true);
+
     } catch (error) {
         console.error("Error performing swap:", error);
         if (error.code === 4001) {
@@ -649,70 +667,70 @@ async function swap() {
     }
 }
 
-// Función para obtener precio
-async function getPrice() {
-    if (!simpleSwapContract) {
-        alert("Please connect your wallet first");
+
+
+async function estimateSwap() {
+    const amountInValue = document.getElementById("amountIn").value;
+
+    if (!simpleSwapContract || !amountInValue || isNaN(amountInValue)) {
         return;
     }
 
-    const tokenA_price_selection = document.getElementById("tokenA_price").value;
-    const tokenB_price_selection = document.getElementById("tokenB_price").value;
-
-    let priceTokenA;
-    let priceTokenB;
-
-    if (tokenA_price_selection === 'A') {
-        priceTokenA = tokenAAddress;
-    } else if (tokenA_price_selection === 'B') {
-        priceTokenA = tokenBAddress;
-    } else {
-        showResult('priceDisplay', 'Selección inválida de Token A para el precio', false);
-        return;
-    }
-
-    if (tokenB_price_selection === 'A') {
-        priceTokenB = tokenAAddress;
-    } else if (tokenB_price_selection === 'B') {
-        priceTokenB = tokenBAddress;
-    } else {
-        showResult('priceDisplay', 'Selección inválida de Token B para el precio', false);
-        return;
-    }
-
-    if (priceTokenA === priceTokenB) {
-        showResult('priceDisplay', 'No se puede obtener el precio de un token en términos de sí mismo', false);
-        return;
-    }
+    const tokenInSelect = document.getElementById("tokenIn").value;
+    const tokenIn = (tokenInSelect === 'A') ? tokenAAddress : tokenBAddress;
+    const tokenOut = (tokenInSelect === 'A') ? tokenBAddress : tokenAAddress;
 
     try {
-        const price = await simpleSwapContract.getPrice(priceTokenA, priceTokenB);
+        const decimals = 18;
+        const amountIn = ethers.utils.parseUnits(amountInValue, decimals);
 
-        let decimalsQuoteToken = 18;
-        try {
-            decimalsQuoteToken = (priceTokenB === tokenAAddress) ? await tokenAContract.decimals() : await tokenBContract.decimals();
-        } catch (error) {
-            console.warn("Couldn't get the reference token's decimals for the price. Using 18 as default", error);
-        }
+        // Obtener reservas actuales
+        const reserveA = await simpleSwapContract.reserveA();
+        const reserveB = await simpleSwapContract.reserveB();
 
-        const formattedPrice = ethers.utils.formatUnits(price, 18);
-        
-        const symbolTokenA = (priceTokenA === tokenAAddress) ? await tokenAContract.symbol() : await tokenBContract.symbol();
-        const symbolTokenB = (priceTokenB === tokenAAddress) ? await tokenAContract.symbol() : await tokenBContract.symbol();
+        // Determinar cuál es reserveIn y reserveOut
+        let reserveIn, reserveOut;
 
-        showResult('priceDisplay', `1 ${symbolTokenA} = ${formattedPrice} ${symbolTokenB}`, true);
-
-    } catch (error) {
-        console.error("Error getting price:", error);
-        if (error.reason && error.reason.includes("Invalid token")) {
-            showResult('priceDisplay', 'Error: Tokens inválidos seleccionados para el pool. Revisa los contratos', false);
-        } else if (error.reason && error.reason.includes("reverted")) {
-            showResult('priceDisplay', 'Error: Transacción revertida', false);
+        if (tokenIn === tokenAAddress) {
+            reserveIn = reserveA;
+            reserveOut = reserveB;
+        } else if (tokenIn === tokenBAddress) {
+            reserveIn = reserveB;
+            reserveOut = reserveA;
         } else {
-            showResult('priceDisplay', `Error obteniendo precio: ${error.message || error.reason || "Revisa la consola para más detalles"}`, false);
+            // Token desconocido, mostrar error y salir
+            console.error("TokenIn no coincide con tokenA ni tokenB");
+            const outputInput = document.querySelectorAll(".swap-container .input-field")[1];
+            outputInput.value = "Error";
+            return;
         }
+
+        // Llamar correctamente a getAmountOut con amountIn y reservas
+        const amountOut = await simpleSwapContract.getAmountOut(amountIn, reserveIn, reserveOut);
+
+        const formattedOut = ethers.utils.formatUnits(amountOut, decimals);
+
+        const outputInput = document.querySelectorAll(".swap-container .input-field")[1];
+        outputInput.value = formattedOut;
+    } catch (error) {
+        console.error("Error estimando el swap:", error);
+        const outputInput = document.querySelectorAll(".swap-container .input-field")[1];
+        outputInput.value = "Error";
     }
 }
 
+
+
+
+
+
 // Inicializar iconos
 updateTokenIcons();
+
+
+    document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("amountIn").addEventListener("input", estimateSwap);
+    document.getElementById("tokenIn").addEventListener("change", estimateSwap);
+});
+
+
