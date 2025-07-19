@@ -10,9 +10,9 @@
 
 | Component         | Blockchain Address                             |
 |-------------------|------------------------------------------------|
-| **TokenA**        | `0xf172b357531c281579892b9457ee02404cb44281`   |
-| **TokenB**        | `0xec5089CeE3bDC194b6194dcc32c1Cfb78D83AaF1`   |
-| **SimpleSwap**    | `0xFbB85e6859Ff9BCA5928bBd49e7DB91dF928fB60`   |
+| **TokenA**        | `0xa6a40df02fdBf62e48B7FDBB3d80a10F378AF24C`   |
+| **TokenB**        | `0x59A7EFAF3C24e2a053B2D92fc427FdA3181a45D5`   |
+| **SimpleSwap**    | `0xCc55aFB4BcEf3D24E196693e1a3250e4faFe3eD4`   |
 
 ---
 
