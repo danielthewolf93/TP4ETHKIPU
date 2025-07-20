@@ -128,6 +128,11 @@ A simple web-based DApp was developed to interact with the SimpleSwap contract.
 View the test coverage directly in your browser:  
 📊 [View Test Coverage Report](https://tp-4-ethkipu-coverage.vercel.app/)
 
+## 📽️ Demo Video
+
+- **Watch on Loom:** [Click here to view the video](https://www.loom.com/share/f618571b94f649f6b9ce1e9dc1f19192?sid=1a99e758-4b09-4fdd-b650-09447f8d319c)
+- **Referenced Transaction:** [`0x887d4be9100684669db4f5741299175d55d786afd4e5df73b83650b38bd0c1a4`](https://sepolia.etherscan.io/tx/0x887d4be9100684669db4f5741299175d55d786afd4e5df73b83650b38bd0c1a4)
+
 ---
 
 ## Features:
